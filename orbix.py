@@ -32,7 +32,7 @@ with st.sidebar:
     # choose a model
     model_name = st.selectbox(
         "Select Model",
-        ["llama3-8b-8192", "gemma2-9b-it",],
+        ["gemma2-9b-it",],
         index=0
     )
 
@@ -120,4 +120,5 @@ st.markdown("""
         © 2025 Nirmalya Pradhan | All rights reserved.
     </p>
 """, unsafe_allow_html=True)
+
 
