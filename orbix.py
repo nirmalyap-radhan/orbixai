@@ -7,44 +7,51 @@ import streamlit as st
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-import streamlit as st
+from dotenv import load_dotenv
+import os
 
+# --- Load Environment Variables ---
+load_dotenv()
 GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
 
+# --- Streamlit Page Setup ---
 st.set_page_config(
     page_title="AI Chatbot | Nirmalya Pradhan",
     page_icon="🤖",
     layout="wide"
 )
 
-# heading
+# --- App Header ---
 st.markdown("""
     <h2 style='text-align: center;'>OrbiX AI</h2>
     <p style='text-align: center; color: gray;'>Built by Nirmalya Sonu using LangChain and Groq API</p>
     <hr>
 """, unsafe_allow_html=True)
 
-# sidebar 
+# --- Sidebar ---
 with st.sidebar:
-    st.header("Settings")
+    st.header("⚙️ Settings")
 
-    # choose a model
     model_name = st.selectbox(
-        "Select Model",
-        ["gemma2-9b-it",],
-        index=0
+    "Select Model",
+    [
+        "llama-3.1-8b-instant",      # Fast, lightweight, good for chatbots
+        "llama-3.1-70b-versatile",   # High-quality, larger model
+        "mixtral-8x7b",              # Powerful mixture-of-experts model
+    ],
+    index=0
     )
 
-    # clear chat button
+
     if st.button("Clear Chat"):
         st.session_state.messages = []
         st.rerun()
 
-# create message list if not already there
+# --- Initialize Chat History ---
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# chat model chain
+# --- Create LangChain Chat Chain ---
 @st.cache_resource
 def get_chain(api_key, model_name):
     if not api_key:
@@ -64,20 +71,21 @@ def get_chain(api_key, model_name):
 
     return prompt | llm | StrOutputParser()
 
-# create the chain using the API key and model
 chain = get_chain(GROQ_API_KEY, model_name)
 
-# show error if API key is missing or wrong
-if not chain:
-    st.error("🚫 Invalid API key. Please check the hardcoded GROQ_API_KEY in the code.")
+# --- Check for API Key ---
+if not GROQ_API_KEY:
+    st.error("🚫 No GROQ_API_KEY found. Please set it in your .env file.")
+elif not chain:
+    st.error("🚫 Could not initialize Groq chain. Check your API key validity.")
 else:
-    # show past chat messages
-    for message in st.session_state.messages:
-        with st.chat_message(message["role"]):
-            st.write(message["content"])
+    # --- Display Past Messages ---
+    for msg in st.session_state.messages:
+        with st.chat_message(msg["role"]):
+            st.write(msg["content"])
 
-    # get user input and generate reply
-    if question := st.chat_input("Ask me anything"):
+    # --- Chat Input ---
+    if question := st.chat_input("Ask me anything..."):
         st.session_state.messages.append({"role": "user", "content": question})
         with st.chat_message("user"):
             st.write(question)
@@ -93,11 +101,10 @@ else:
 
                 message_placeholder.markdown(full_response)
                 st.session_state.messages.append({"role": "assistant", "content": full_response})
-
             except Exception as e:
                 st.error(f"Error: {str(e)}")
 
-# show example questions
+# --- Example Prompts ---
 st.markdown("""
     <hr>
     <h4 style='text-align: center;'>💡 Try Asking Me</h4>
@@ -106,12 +113,12 @@ st.markdown("""
 col1, col2 = st.columns(2)
 with col1:
     st.markdown("- Build an AI bot?")
-    st.markdown("- LangChain in one line")
+    st.markdown("- Explain LangChain in one line")
 with col2:
-    st.markdown("- AI project ideas?")
-    st.markdown("- Groq haiku please")
+    st.markdown("- Suggest AI project ideas")
+    st.markdown("- Write a Groq haiku")
 
-# footer
+# --- Footer ---
 st.markdown("""
     <hr>
     <p style='text-align: center; color: gray;'>
@@ -119,7 +126,3 @@ st.markdown("""
         © 2025 Nirmalya Pradhan | All rights reserved.
     </p>
 """, unsafe_allow_html=True)
-
-
-
-
