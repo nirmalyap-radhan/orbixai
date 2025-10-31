@@ -36,8 +36,7 @@ with st.sidebar:
     "Select Model",
     [
         "llama-3.1-8b-instant",      # Fast, lightweight, good for chatbots
-        "llama-3.1-70b-versatile",   # High-quality, larger model
-        "mixtral-8x7b",              # Powerful mixture-of-experts model
+                      # Powerful mixture-of-experts model
     ],
     index=0
     )
@@ -126,3 +125,4 @@ st.markdown("""
         © 2025 Nirmalya Pradhan | All rights reserved.
     </p>
 """, unsafe_allow_html=True)
+
