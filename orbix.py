@@ -7,11 +7,10 @@ import streamlit as st
 from langchain_groq import ChatGroq
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
-from dotenv import load_dotenv
-import os
+import streamlit as st
 
-load_dotenv()  # Load environment variables from orbix.env
-GROQ_API_KEY = os.getenv("GROQ_API_KEY")
+GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
+
 st.set_page_config(
     page_title="AI Chatbot | Nirmalya Pradhan",
     page_icon="🤖",
@@ -120,6 +119,7 @@ st.markdown("""
         © 2025 Nirmalya Pradhan | All rights reserved.
     </p>
 """, unsafe_allow_html=True)
+
 
 
 
